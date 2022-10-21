@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -45,5 +46,28 @@ public class MainControllerTest {
                         .authorities(new SimpleGrantedAuthority("SCOPE_secret:read"))
                 ))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    public void given_wrong_authorization_creating_secret_is_denied() throws Exception {
+        mockMvc.perform(post("/secret")
+                        .with(jwt()
+                                .authorities(new SimpleGrantedAuthority("SCOPE_secret:read"))
+                        )
+                        .content("my secret"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser
+    public void given_right_authorization_creating_secret_is_successful() throws Exception {
+        mockMvc.perform(post("/secret")
+                        .with(jwt()
+                                .authorities(new SimpleGrantedAuthority("SCOPE_secret:write"))
+                        )
+                        .content("my secret"))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString().equals("my secret");
     }
 }

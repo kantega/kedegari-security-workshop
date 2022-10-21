@@ -3,6 +3,7 @@ package no.kantega.kedegari_security_workshop.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,6 +24,7 @@ public class WebSecurityConfiguration {
                 .csrf().disable()
                 .authorizeRequests( authorize -> {
                     authorize.antMatchers("/").permitAll();
+                    authorize.antMatchers("/secret").hasAuthority("SCOPE_secret:read");
                     authorize.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(server -> server.jwt(Customizer.withDefaults()));
