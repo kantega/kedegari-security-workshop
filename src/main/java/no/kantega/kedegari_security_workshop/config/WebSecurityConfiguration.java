@@ -24,6 +24,7 @@ public class WebSecurityConfiguration {
                 .csrf().disable()
                 .authorizeRequests( authorize -> {
                     authorize.antMatchers("/").permitAll();
+                    authorize.antMatchers(HttpMethod.POST, "/secret").hasAuthority("SCOPE_secret:write");
                     authorize.antMatchers("/secret").hasAuthority("SCOPE_secret:read");
                     authorize.anyRequest().authenticated();
                 })
