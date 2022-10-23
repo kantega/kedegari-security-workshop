@@ -1,15 +1,16 @@
 package no.kantega.kedegari_security_workshop.service;
 
-import no.kantega.kedegari_security_workshop.dao.Secret;
 import no.kantega.kedegari_security_workshop.dao.SecretRepository;
+import no.kantega.kedegari_security_workshop.dto.SecretDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -22,16 +23,17 @@ public class SecretService {
     @Autowired
     private DataSource dataSource;
 
-    public List<Secret> getSecrets(String category) throws SQLException {
-        String query = String.format("select * from SECRET where category = '%s'", category);
-        ResultSet resultSet = dataSource.getConnection().createStatement().executeQuery(query);
-        List<Secret> secrets = new ArrayList();
+    public List<SecretDto> getSecrets(String category) throws SQLException {
+        Connection connection = dataSource.getConnection();
+        PreparedStatement statement = connection.prepareStatement("select * from SECRET where category = ?");
+        statement.setString(1, category);
+
+        ResultSet resultSet = statement.executeQuery();
+        List<SecretDto> secrets = new ArrayList();
         while (resultSet.next()) {
             secrets.add(
-                    new Secret(
-                            resultSet.getLong(resultSet.findColumn("id")),
-                            resultSet.getString(resultSet.findColumn("secret")),
-                            resultSet.getString(resultSet.findColumn("category"))
+                    new SecretDto(
+                            resultSet.getString(resultSet.findColumn("secret"))
                     )
             );
         }
