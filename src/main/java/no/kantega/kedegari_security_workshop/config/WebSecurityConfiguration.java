@@ -23,7 +23,7 @@ public class WebSecurityConfiguration {
         http
                 .csrf().disable()
                 .authorizeRequests( authorize -> {
-                    authorize.antMatchers("/").permitAll();
+                    authorize.antMatchers("/", "/h2-console/**").permitAll();
                     authorize.antMatchers(HttpMethod.POST, "/secret").hasAuthority("SCOPE_secret:write");
                     authorize.antMatchers("/secret").hasAuthority("SCOPE_secret:read");
                     authorize.anyRequest().authenticated();
