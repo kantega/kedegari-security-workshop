@@ -1,0 +1,63 @@
+Kantega Kedegåri Security Workshop, Oct. 2022
+
+These are instructions/guidelines on how to conduct a security workshop, initially held at the Kantega 'Kedegåri' session, October 2022.
+The workshop is an introduction to security issues one may face as a Java (and general) backend developer.
+That being said, the goal of the workshop is to introduce a security mindset among the developers, rather than instructing them what to do.
+It focuses on input- and output validation in general, and provides a few challenges on how to go about keeping updated on vulnerabilities.
+The idea being that writing unit- or integration tests with a security focus can be challenging.
+
+!! Copy this document to a separate directory, before starting the workshop, as it is not present in other branches !!
+
+--
+
+Start:
+
+- Checkout main
+- Run 'mvn clean test' and verify that everything is ok.
+- Run 'spring-boot:run'
+- Verify "Hello World" on / and secret in /secret
+- Talk about the intention of hiding /secret and why it hasn't been hidden - default open.
+
+
+Introduce security profile and authentication:
+- Checkout 'add_security_profile'
+- Run 'mvn spring-boot:run' and verify that '/secret' returns 401
+- Talk about authentication
+- Run 'mvn clean test'
+- Talk about privileges/authorisation, and the difference from authentication
+- Fix privilege:
+1. Add 'SCOPE_secret:read' as authorisation rule to /secret endpoint
+- Verify that tests are OK
+
+
+Refine authorization:
+- Checkout 'add_authorization_requirement'
+- Run 'mvn clean test'
+- Talk about privilege separation (the principle of least privilege)
+- Fix broken access control:
+1. Add 'SCOPE_secret:write' as authorisation rule to POST request
+- Verify that tests are OK
+
+
+Using tokens:
+- Talk about obtaining tokens and how to go about scopes.
+- Talk about caveats and the burden of having to negotiate tokens for different access levels.
+
+
+Introducing static code analysis (FindSecBugs):
+- Talk about effort in keeping updated on vulnerabilities and security strategies.
+- Checkout 'static_code_analysis'
+- Run 'mvn clean test'
+- Discuss basis for knowing about these issues
+- Run 'mvn spotbugs:spotbugs'
+- Run 'mvn spotbugs:gui' to see the result of the scan
+- Talk about having automated checks
+- Fix injection vulnerability:
+1. Use prepared statements or an ORM (e.g. Hibernate)
+
+
+Talking about output validation:
+- Checkout 'output_validation'
+- Run 'mvn clean test'
+- Discuss whether the test any longer makes sense
+- Discuss what data should be returned/redacted
